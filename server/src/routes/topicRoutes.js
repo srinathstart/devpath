@@ -4,7 +4,8 @@ import {
   createTopic,
   getTopicsByLearningPath,
   updateTopic,
-  deleteTopic
+  deleteTopic,
+  getReviewTopics
 } from "../controllers/topicController.js";
 
 
@@ -18,5 +19,6 @@ router.get(
 );
 router.patch("/:id", protect, updateTopic);
 router.delete("/:id", protect, deleteTopic);
+router.get("/review", protect, getReviewTopics);
 
 export default router;

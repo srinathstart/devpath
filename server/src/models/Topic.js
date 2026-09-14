@@ -24,6 +24,17 @@ const topicSchema = new mongoose.Schema(
       default: "not-started"
     },
 
+    confidence: {
+      type: String,
+      enum: [
+        "dont-understand",
+        "learning",
+        "comfortable",
+        "can-explain"
+      ],
+      default: "dont-understand"
+    },
+
     learningPath: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "LearningPath",

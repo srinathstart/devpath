@@ -106,12 +106,13 @@ export const updateTopic = async (req, res) => {
       });
     }
 
-    const { title, description, order, status } = req.body;
+    const { title, description, order, status, confidence } = req.body;
 
     if (title !== undefined) topic.title = title;
     if (description !== undefined) topic.description = description;
     if (order !== undefined) topic.order = order;
     if (status !== undefined) topic.status = status;
+    if (confidence !== undefined) topic.confidence = confidence;
 
     await topic.save();
 
@@ -152,6 +153,28 @@ export const deleteTopic = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Topic deleted successfully"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
+
+export const getReviewTopics = async (req, res) => {
+  try {
+    const topics = await Topic.find({
+      createdBy: req.userId,
+      confidence: {
+        $in: ["dont-understand", "learning"]
+      }
+    }).sort({ updatedAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      topics
     });
 
   } catch (error) {
