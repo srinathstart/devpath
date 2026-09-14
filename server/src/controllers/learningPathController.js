@@ -1,4 +1,5 @@
 import LearningPath from "../models/LearningPath.js";
+import Topic from "../models/Topic.js";
 
 export const createLearningPath = async (req, res) => {
   try {
@@ -143,6 +144,53 @@ export const deleteLearningPath = async (req, res) => {
       success: true,
       message: "Learning path deleted successfully"
     });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
+
+export const getLearningPathProgress = async (req, res) => {
+  try {
+    const learningPath = await LearningPath.findById(req.params.id);
+
+    if (!learningPath) {
+      return res.status(404).json({
+        success: false,
+        message: "Learning path not found"
+      });
+    }
+
+    if (learningPath.createdBy.toString() !== req.userId) {
+      return res.status(403).json({
+        success: false,
+        message: "Not allowed to access this learning path"
+      });
+    }
+
+    const totalTopics = await Topic.countDocuments({
+      learningPath: req.params.id
+    });
+
+    const completedTopics = await Topic.countDocuments({
+      learningPath: req.params.id,
+      status: "completed"
+    });
+
+    const progress =
+      totalTopics === 0
+        ? 0
+        : Math.round((completedTopics / totalTopics) * 100);
+
+    return res.status(200).json({
+      success: true,
+      totalTopics,
+      completedTopics,
+      progress
+    });
+
   } catch (error) {
     return res.status(500).json({
       success: false,

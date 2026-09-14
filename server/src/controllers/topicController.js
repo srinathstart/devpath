@@ -87,3 +87,77 @@ export const getTopicsByLearningPath = async (req, res) => {
     });
   }
 };
+
+export const updateTopic = async (req, res) => {
+  try {
+    const topic = await Topic.findById(req.params.id);
+
+    if (!topic) {
+      return res.status(404).json({
+        success: false,
+        message: "Topic not found"
+      });
+    }
+
+    if (topic.createdBy.toString() !== req.userId) {
+      return res.status(403).json({
+        success: false,
+        message: "Not allowed to update this topic"
+      });
+    }
+
+    const { title, description, order, status } = req.body;
+
+    if (title !== undefined) topic.title = title;
+    if (description !== undefined) topic.description = description;
+    if (order !== undefined) topic.order = order;
+    if (status !== undefined) topic.status = status;
+
+    await topic.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Topic updated successfully",
+      topic
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
+
+export const deleteTopic = async (req, res) => {
+  try {
+    const topic = await Topic.findById(req.params.id);
+
+    if (!topic) {
+      return res.status(404).json({
+        success: false,
+        message: "Topic not found"
+      });
+    }
+
+    if (topic.createdBy.toString() !== req.userId) {
+      return res.status(403).json({
+        success: false,
+        message: "Not allowed to delete this topic"
+      });
+    }
+
+    await topic.deleteOne();
+
+    return res.status(200).json({
+      success: true,
+      message: "Topic deleted successfully"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
