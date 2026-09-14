@@ -4,6 +4,7 @@ import healthRoutes from './routes/healthRoutes.js';
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import learningPathRoutes from "./routes/learningPathRoutes.js";
+import topicRoutes from "./routes/topicRoutes.js";
 
 
 dotenv.config();
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use('/api/health', healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/learning-paths", learningPathRoutes);
+app.use("/api/topics", topicRoutes);
 
 const PORT = process.env.PORT || 5001;
 
